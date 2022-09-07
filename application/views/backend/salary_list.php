@@ -138,8 +138,8 @@
                                             <td class="border"><?= $key + 1 ?></td>
                                             <td class="border"><?= $sl['nik'] ?></td>
                                             <td class="border"><?= $sl['nama'] ?></td>
-                                            <td class="border"><?= $sl['jabatan_name'] ?></td>
-                                            <td class="border"><?= $sl['branch_name'] ?></td>
+                                            <td class="border"><?= $sl['jabatan'] ?></td>
+                                            <td class="border"><?= $sl['cabang'] ?></td>
                                             <td class="border"><?= number_format($sl['gp']) ?></td>
                                             <td class="border"><?= number_format($sl['tk']) ?></td>
                                             <td class="border"><?= number_format($sl['gp_tk']) ?></td>
@@ -228,8 +228,8 @@
         </div>
         <!-- end -->
         <!-- Modal -->
-        <div class="modal fade" id="bulkSlipPayroll" tabindex="-1" role="dialog" aria-labelledby="bulkSlipPayrollLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
+        <div class="modal fade" id="bulkSlipPayroll" role="dialog" aria-labelledby="bulkSlipPayrollLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="bulkSlipPayrollLabel">BULK SLIP Payroll</h5>
@@ -237,10 +237,36 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form id="form_bulkSlipPayroll">
-                        <div class="modal-body">
+                    <form id="form_bulkSlipPayroll" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group col-12 mt-2">
+                                    <label for="cabang">Cabang</label>
+                                    <select class="select2 form-control custom-select col-12" id="filter_cabang" name="filter_cabang" style="width: 100%;">
+                                        <option selected value="">--pilih cabang--</option>
+                                        <?php foreach ($cabang_all as $value) : ?>
+                                            <option value="<?php echo $value['cabang'] ?>">
+                                                <?php echo $value['cabang']; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group col-12 mt-2">
+                                    <label for="karyawan">Karyawan</label>
+                                    <select class="select2 form-control custom-select col-12" data-placeholder="pilih karyawan" id="filter_karyawan" name="filter_karyawan" style="width: 100%;">
+                                        <option selected value="">--pilih karyawan--</option>
+                                        <?php foreach ($karyawan_all as $value) : ?>
+                                            <option value="<?php echo $value['nik'] ?>">
+                                                <?php echo '(' . $value['nik'] . ') ' . $value['nama']; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-body mr-3">
                             <!-- Progress bar -->
-                            <span id="progress-slip" class="badge badge-pill badge-success m-3 mr-5">0 %</span>
+                            <span id="progress-slip" class="badge badge-pill badge-success mr-5">0 %</span>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -429,10 +455,20 @@
                     beforeSend: function() {
                         $("#progress-slip").text('0 %');
                     },
-                    success: function(response) {
-                        console.log(response);
-                        // $(".message").fadeIn('fast').delay(3000).fadeOut('fast').html(response);
-                        // $('form').trigger("reset");
+                    // success: function(response) {
+                    //     console.log(response);
+                    //     $(".message").fadeIn('fast').delay(3000).fadeOut('fast').html(response);
+                    //     $('form').trigger("reset");
+                    //     $(".modal").hide();
+                    //     window.setTimeout(function() {
+                    //         location.reload()
+                    //     }, 1000);
+                    // },
+                    complete: function(xhr, textStatus) {
+                        console.log(xhr.status);
+                        $(".message").fadeIn('fast').delay(3000).fadeOut('fast').text('Berhasil');
+                        $('form').trigger("reset");
+                        $('.modal-body').html('<h1 style="color:green;"><b>BERHASIL!!!</b></h1>');
                         // $(".modal").hide();
                         // window.setTimeout(function() {
                         //     location.reload()

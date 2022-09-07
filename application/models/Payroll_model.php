@@ -222,13 +222,42 @@ class Payroll_model extends CI_Model
   //   $result = $query->result_array();
   //   return $result;
   // }
-  public function getAllDataSalary()
+  public function getAllDataSalary($karyawan = null, $cabang = null)
   {
-    $sql = "SELECT p.nik,p.nama,p.jabatan_name, p.golongan, p.branch_name, es.*
+    $this->db->select('emp_salary.*');
+    $this->db->where('emp_salary.email !=', '');
+
+    if ($karyawan) {
+      $this->db->where('emp_salary.nik', $karyawan);
+    }
+
+    if ($cabang) {
+      $this->db->where('emp_salary.cabang', $cabang);
+    }
+
+    $this->db->from('emp_salary');
+    $this->db->order_by('emp_salary.nama', 'ASC');
+    return $this->db->get()->result_array();
+    // $this->db->get()->result_array();
+    // return $this->db->last_query();
+  }
+
+  public function getKaryawan()
+  {
+    $sql = "SELECT es.nik, es.nama 
               FROM `emp_salary` es
-              RIGHT JOIN `pegawai` p ON p.nik=es.nik 
-              WHERE es.email != ''
-              ORDER BY p.branch_name asc, p.nama ASC;";
+              WHERE es.email != '' 
+              ORDER BY es.nama ASC;";
+    $query = $this->db->query($sql);
+    $result = $query->result_array();
+    return $result;
+  }
+
+  public function getCabangDistict()
+  {
+    $sql = "SELECT DISTINCT es.cabang  
+              FROM `emp_salary` es
+              ORDER BY es.cabang ASC;";
     $query = $this->db->query($sql);
     $result = $query->result_array();
     return $result;
